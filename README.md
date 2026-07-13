@@ -1,4 +1,5 @@
 # chess
+Learning project for gleam. Chess engine + frontend for single system chess game
 
 [![Package Version](https://img.shields.io/hexpm/v/chess)](https://hex.pm/packages/chess)
 [![Hex Docs](https://img.shields.io/badge/hex-docs-ffaff3)](https://hexdocs.pm/chess/)
