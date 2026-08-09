@@ -54,7 +54,7 @@ pub fn walk(
   let next = #(r + dr, c + dc)
   case legal_step(board, next, color) {
     [] -> acc
-    [square, .._] ->
+    [square, ..] ->
       case is_empty(board, square) {
         True -> walk(board, square, color, direction, [square, ..acc])
         False -> [square, ..acc]
