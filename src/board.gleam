@@ -1,7 +1,6 @@
 import gleam/dict
 import gleam/list
 import gleam/option.{type Option, None, Some}
-import moves
 import piece.{
   type Color, type Piece, type PieceType, Bishop, Black, King, Knight, Pawn,
   Piece, Queen, Rook, White,
@@ -18,9 +17,9 @@ pub fn init_board() -> Board {
 
   let empty_board =
     {
-      use x <- list.flat_map(indices)
-      use y <- list.map(indices)
-      #(#(x, y), None)
+      use row <- list.flat_map(indices)
+      use col <- list.map(indices)
+      #(#(row, col), None)
     }
     |> dict.from_list()
 
@@ -53,7 +52,7 @@ pub fn init_board() -> Board {
 //helper to place a row of pawns
 fn deploy_pawn_row(board: Board, row: Int, color: Color) -> Board {
   use board_acc, col <- list.fold(range(0, 8), board)
-  { dict.insert(board_acc, #(col, row), Some(Piece(color, Pawn))) }
+  { dict.insert(board_acc, #(row, col), Some(Piece(color, Pawn))) }
 }
 
 //helper to place row of pieces
@@ -68,7 +67,7 @@ fn deploy_row(
   use board_acc, pair <- list.fold(columns_with_pieces, board)
   {
     let #(col, piece_type) = pair
-    dict.insert(board_acc, #(col, row), Some(Piece(color, piece_type)))
+    dict.insert(board_acc, #(row, col), Some(Piece(color, piece_type)))
   }
 }
 
@@ -80,18 +79,20 @@ pub fn range(start: Int, stop: Int) -> List(Int) {
   }
 }
 
-pub fn move_piece(
-  board: Board,
-  from_row: Int,
-  from_col: Int,
-  to_row: Int,
-  to_col: Int,
-) -> #(Bool, Board) {
-  case moves.can_move(board, from_row, from_col, to_row, to_col) {
-    True -> #(True, execute_move(board, from_row, from_col, to_row, to_col))
-
-    False -> #(False, board)
+pub fn get(board: Board, row: Int, col: Int) -> Result(Option(Piece), Nil) {
+  case dict.get(board, #(row, col)) {
+    Ok(piece) -> Ok(piece)
+    Error(_) -> Error(Nil)
   }
+}
+
+pub fn set(
+  board: Board,
+  row: Int,
+  col: Int,
+  piece: Option(Piece),
+) -> Result(Board, Nil) {
+  Ok(dict.insert(board, #(row, col), piece))
 }
 
 pub fn execute_move(
